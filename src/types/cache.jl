@@ -12,7 +12,7 @@ mutable struct AES192Cache{kType,tmpType} <: AbstractAESCache
 	K::kType
 	tmp::tmpType
 	function AES192Cache()
-		K = @SArray[ zeros(UInt8, 4) for i in 1:4 ]
+		K = @SArray[ zeros(UInt8, 4) for i in 1:6 ]
 		tmp = zeros(UInt8, 4)
 		new{typeof(K),typeof(tmp)}(K,tmp)
 	end
