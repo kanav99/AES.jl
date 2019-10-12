@@ -21,3 +21,5 @@ convert_key(key::Array{UInt8,1}, ::Val{128}) = AES128Key(key)
 convert_key(key::Array{UInt8,1}, ::Val{192}) = AES192Key(key)
 convert_key(key::Array{UInt8,1}, ::Val{256}) = AES256Key(key)
 convert_key(key::String, key_length) = convert_key(Array{UInt8}(key), key_length)
+
+@inline Base.getindex(k::AbstractAESKey, i) = k.key[i]
