@@ -15,5 +15,7 @@ function decrypt(ciphertext::AESCipherText, cipher::AES;remove_pad=true)
 		raw = AESECB_D(ciphertext.data, ciphertext.iv, cipher.key, cipher.cache)
 	elseif cipher.mode == CTR
 		raw = AESCTR_D(ciphertext.data, ciphertext.iv, cipher.key, cipher.cache)
+	elseif cipher.mode == CFB
+		raw = AESCFB_D(ciphertext.data, ciphertext.iv, cipher.key, cipher.cache)
 	end
 end
