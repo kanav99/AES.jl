@@ -27,3 +27,5 @@ function AESCTR(plaintext, iv::Array{UInt8, 1}, key::AbstractAESKey, cache::Abst
     end
     result
 end
+
+AESCTR_D(ciphertext::Array{UInt8, 1}, iv::Array{UInt8, 1}, key::AbstractAESKey, cache::AbstractAESCache) = AESCTR(ciphertext, iv, key, cache)
