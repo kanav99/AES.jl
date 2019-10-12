@@ -133,7 +133,6 @@ function AESEncryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}}, block
 				K[4] .= K[4] .⊻ K[3]
 				K[5] .= K[5] .⊻ K[4] #DIFF
 				K[6] .= K[6] .⊻ K[5] #DIFF
-
 			end
 			# SubBytes
 			for j in 1:16
