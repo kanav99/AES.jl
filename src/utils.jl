@@ -81,3 +81,4 @@ get_key_length(key::String) = 8 * size(key)
 get_key_length(key::AES128Key) = 128
 get_key_length(key::AES192Key) = 192
 get_key_length(key::AES256Key) = 256
+get_key_length(cipher::AES) = get_key_length(cipher.key)
