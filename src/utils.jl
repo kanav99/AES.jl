@@ -70,14 +70,14 @@ function keygen(key_length)
 end
 
 function is_valid_key_length(key_length)
-	if key_length == 128 || key_length == 196 || key_length == 256
+	if key_length == 128 || key_length == 192 || key_length == 256
 		return true
 	end
 	return false
 end
 
 get_key_length(key::Array{UInt8}) = 8 * length(key)
-get_key_length(key::String) = 8 * size(key)
+get_key_length(key::String) = 8 * length(key)
 get_key_length(key::AES128Key) = 128
 get_key_length(key::AES192Key) = 192
 get_key_length(key::AES256Key) = 256

@@ -22,4 +22,10 @@ c = [0xdd, 0xa9, 0x7c, 0xa4, 0x86, 0x4c, 0xdf, 0xe0, 0x6e, 0xaf, 0x70, 0xa0, 0xe
 key = AES192Key(k)
 
 @test c == Rijndael.AESEncryptBlock(p, key)
+@test p == Rijndael.AESDecryptBlock(c, key)
+@test p == Rijndael.AESDecryptBlock(Rijndael.AESEncryptBlock(p,key),key)
 
+# Performance Checks
+cache = Rijndael.AES192Cache()
+@btime Rijndael.AESEncryptBlock!(p, p, key, cache)
+@btime Rijndael.AESDecryptBlock!(c, c, key, cache)
