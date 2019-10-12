@@ -6,14 +6,13 @@
 	CTR = 5
 end
 
-mutable struct AES{modeType,cacheType,keyType,ivType} <: AbstractCipher
+mutable struct AES{modeType,cacheType,keyType} <: AbstractCipher
 	mode::modeType
 	cache::cacheType
 	key::keyType
-	iv::ivType
 end
 
-function AES(;key_length=256,mode=CBC,key=keygen(key_length),iv=nothing)
+function AES(;key_length=128,mode=CBC,key=keygen(key_length))
 	if !is_valid_key_length(key_length)
 		error("$key_length is an invalid key length. Key length can be 128, 196 or 256.")
 	end
@@ -26,9 +25,5 @@ function AES(;key_length=256,mode=CBC,key=keygen(key_length),iv=nothing)
 
 	cache = gen_cache(aes_key)
 
-	if mode == CBC && iv isa Nothing
-		iv = rand(UInt8, 16)
-	end
-
-	AES(mode,cache,aes_key,iv)
+	AES(mode,cache,aes_key)
 end
