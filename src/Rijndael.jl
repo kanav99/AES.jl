@@ -19,6 +19,7 @@ module Rijndael
 	include("modes/CBC.jl")
 	include("modes/ECB.jl")
 	include("modes/CTR.jl")
+	include("modes/CFB.jl")
 	include("encrypt.jl")
 	include("decrypt.jl")
 

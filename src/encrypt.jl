@@ -11,8 +11,11 @@ function encrypt(plaintext::Union{String,Array{UInt8}}, cipher::AES;
 		raw = AESECB(plaintext, cipher.key, cipher.cache)
 		return AESCipherText(raw, nothing, get_key_length(cipher), ECB, typeof(plaintext))
 	elseif cipher.mode == CTR
-		raw = AESCTR(plaintext, cipher.iv, cipher.key, cipher.cache)
-		return AESCipherText(raw, cipher.iv, get_key_length(cipher), CTR, typeof(plaintext))
+		raw = AESCTR(plaintext, iv, cipher.key, cipher.cache)
+		return AESCipherText(raw, iv, get_key_length(cipher), CTR, typeof(plaintext))
+	elseif cipher.mode == CFB
+		raw = AESCFB(plaintext, iv, cipher.key, cipher.cache)
+		return AESCipherText(raw, iv, get_key_length(cipher), CFB, typeof(plaintext))
 	end
 end
 
