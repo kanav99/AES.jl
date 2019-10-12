@@ -90,5 +90,7 @@ function needs_iv(mode)
 		return false
 	elseif mode == CTR
 		return true
+	elseif mode == CFB
+		return true
 	end
 end
