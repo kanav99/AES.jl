@@ -10,7 +10,7 @@ function decrypt(ciphertext::AESCipherText, cipher::AES; remove_pad=true)
 		error("Mismatching keylength")
 	end
 	if iscbc(cipher)
-		raw = AESCBC_D(ciphertext.data, ciphertext.iv, cipher.key, cipher.cache, remove_pad)
+		raw = AESCBC_D(ciphertext.data, ciphertext.iv, cipher.key, cipher.cache; remove_pad=remove_pad)
 	elseif isctr(cipher)
 		raw = AESCTR_D(ciphertext.data, ciphertext.iv, cipher.key, cipher.cache)
 	elseif isecb(cipher)
@@ -27,7 +27,7 @@ function decrypt!(plaintext, ciphertext::AESCipherText, cipher::AES; remove_pad=
 		error("Mismatching keylength")
 	end
 	if iscbc(cipher)
-		AESCBC_D!(plaintext, ciphertext.data, ciphertext.iv, cipher.key, cipher.cache, remove_pad)
+		AESCBC_D!(plaintext, ciphertext.data, ciphertext.iv, cipher.key, cipher.cache; remove_pad=remove_pad)
 	elseif isctr(cipher)
 		AESCTR_D!(plaintext, ciphertext.data, ciphertext.iv, cipher.key, cipher.cache)
 	elseif isecb(cipher)

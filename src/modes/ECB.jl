@@ -1,71 +1,47 @@
 
-
 function AESECB(plaintext, key::AbstractAESKey, cache::AbstractAESCache)
 	len = length(plaintext)
 	pad = 16 - (len % 16)
-	result = similar(Array{UInt8, 1}, pad + len)
-	for i in 1:len
-		result[i] = UInt8(plaintext[i])
-	end
-	for i in 1:pad
-		result[len+i] = pad
-	end
-	iters = Int((len + pad) / 16)
-	for i in 1:iters
-		start = 16(i-1)+1
-		ending = 16i
-		view_res = @view(result[start:ending])
-		AESEncryptBlock!(view_res, view_res, key, cache)
-	end
-	result
+	ciphertext = similar(Array{UInt8, 1}, pad + len)
+	AESECB!(ciphertext, plaintext, key, cache)
 end
 
 function AESECB!(ciphertext, plaintext, key::AbstractAESKey, cache::AbstractAESCache)
 	len = length(plaintext)
 	pad = 16 - (len % 16)
-	result = ciphertext
 	for i in 1:len
-		result[i] = UInt8(plaintext[i])
+		ciphertext[i] = UInt8(plaintext[i])
 	end
 	for i in 1:pad
-		result[len+i] = pad
+		ciphertext[len+i] = pad
 	end
 	iters = Int((len + pad) / 16)
 	for i in 1:iters
 		start = 16(i-1)+1
 		ending = 16i
-		view_res = @view(result[start:ending])
+		view_res = @view(ciphertext[start:ending])
 		AESEncryptBlock!(view_res, view_res, key, cache)
 	end
-	result
+	ciphertext
 end
 
 function AESECB_D(ciphertext::Array{UInt8, 1}, key::AbstractAESKey, cache::AbstractAESCache)
 	len = length(ciphertext)
 	iters = Int(len / 16)
-	result = similar(Array{UInt8, 1}, len)
-	for i in 1:iters
-		start = 16(i-1)+1
-		ending = 16i
-		ct_view = @view(ciphertext[start:ending])
-		res_view = @view(result[start:ending])
-		AESDecryptBlock!(res_view, ct_view, key, cache)
-	end
-	pad = result[end]
-	@view(result[1:len-pad])
+	plaintext = similar(Array{UInt8, 1}, len)
+	AESECB_D!(plaintext, ciphertext, key, cache)
 end
 
 function AESECB_D!(plaintext, ciphertext::Array{UInt8, 1}, key::AbstractAESKey, cache::AbstractAESCache)
 	len = length(ciphertext)
 	iters = Int(len / 16)
-	result = plaintext
 	for i in 1:iters
 		start = 16(i-1)+1
 		ending = 16i
 		ct_view = @view(ciphertext[start:ending])
-		res_view = @view(result[start:ending])
+		res_view = @view(plaintext[start:ending])
 		AESDecryptBlock!(res_view, ct_view, key, cache)
 	end
-	pad = result[end]
-	@view(result[1:len-pad])
+	pad = plaintext[end]
+	@view(plaintext[1:len-pad])
 end
