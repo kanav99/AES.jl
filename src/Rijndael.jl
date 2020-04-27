@@ -9,16 +9,13 @@ module Rijndael
 	abstract type AbstractAESKey <: AbstractSymmetricKey end
 	abstract type AbstractAESCache <: AbstractCipherCache end
 
-	include("types/key.jl")
-	include("types/cache.jl")
-	include("types/ciphertext.jl")
-	include("types/cipher.jl")
-	include("utils.jl")
+	include("constants.jl")
+	include("types.jl")
 	include("block_encryption.jl")
 	include("block_decryption.jl")
-	include("modes/CBC.jl")
-	include("modes/ECB.jl")
-	include("modes/CTR.jl")
+	include("modes/cbc.jl")
+	include("modes/ctr.jl")
+	include("modes/ecb.jl")
 	include("encrypt.jl")
 	include("decrypt.jl")
 

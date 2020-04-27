@@ -1,3 +1,15 @@
+# contains code with no dependencies, is loaded first
+@enum MODE::UInt8 begin
+	ECB = 1
+	CBC = 2
+	CFB = 3
+	OFB = 4
+	CTR = 5
+end
+
+Base.xor(a::Char, b::UInt8) = xor(UInt8(a), b)
+Base.xor(a::UInt8, b::Char) = xor(a, UInt8(b))
+
 global const SBOX = @SArray[
 0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
 0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0,
@@ -76,19 +88,16 @@ function is_valid_key_length(key_length)
 	return false
 end
 
-get_key_length(key::Array{UInt8}) = 8 * length(key)
-get_key_length(key::String) = 8 * length(key)
-get_key_length(key::AES128Key) = 128
-get_key_length(key::AES192Key) = 192
-get_key_length(key::AES256Key) = 256
-get_key_length(cipher::AES) = get_key_length(cipher.key)
-
-function needs_iv(mode)
-	if mode == CBC
-		return true
-	elseif mode == ECB
-		return false
-	elseif mode == CTR
-		return true
+function increment!(bytearray::Array{UInt8})
+	len = length(bytearray)
+	for i in len:-1:1
+		if bytearray[i] === 0xff
+			bytearray[i] = 0x00
+		else
+			bytearray[i] += 0x01
+			break
+		end
 	end
 end
+
+

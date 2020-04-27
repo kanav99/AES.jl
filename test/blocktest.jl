@@ -11,7 +11,7 @@ key = AES128Key(k)
 @test p == Rijndael.AESDecryptBlock(Rijndael.AESEncryptBlock(p,key),key)
 
 # Performance Checks
-cache = Rijndael.AES128Cache()
+cache = Rijndael.gen_cache(key)
 @btime Rijndael.AESEncryptBlock!(p, p, key, cache)
 @btime Rijndael.AESDecryptBlock!(c, c, key, cache)
 
@@ -26,6 +26,6 @@ key = AES192Key(k)
 @test p == Rijndael.AESDecryptBlock(Rijndael.AESEncryptBlock(p,key),key)
 
 # Performance Checks
-cache = Rijndael.AES192Cache()
+cache = Rijndael.gen_cache(key)
 @btime Rijndael.AESEncryptBlock!(p, p, key, cache)
 @btime Rijndael.AESDecryptBlock!(c, c, key, cache)
