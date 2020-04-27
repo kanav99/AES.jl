@@ -52,6 +52,20 @@ function AESECB_D(ciphertext::Array{UInt8, 1}, key::AbstractAESKey, cache::Abstr
 		AESDecryptBlock!(res_view, ct_view, key, cache)
 	end
 	pad = result[end]
-	result[1:len-pad]
+	@view(result[1:len-pad])
 end
 
+function AESECB_D!(plaintext, ciphertext::Array{UInt8, 1}, key::AbstractAESKey, cache::AbstractAESCache)
+	len = length(ciphertext)
+	iters = Int(len / 16)
+	result = plaintext
+	for i in 1:iters
+		start = 16(i-1)+1
+		ending = 16i
+		ct_view = @view(ciphertext[start:ending])
+		res_view = @view(result[start:ending])
+		AESDecryptBlock!(res_view, ct_view, key, cache)
+	end
+	pad = result[end]
+	@view(result[1:len-pad])
+end

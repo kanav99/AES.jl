@@ -16,7 +16,7 @@ function AESDecryptBlock(block::Union{Array{UInt8, 1}, SubArray{UInt8}}, key, ca
 	result
 end
 
-function AESDecryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}}, block::Union{Array{UInt8, 1}, SubArray{UInt8}}, key::AES128Key, cache::AES128Cache)
+function AESDecryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}}, block::Union{Array{UInt8, 1}, SubArray{UInt8}}, key::AES128Key, cache::CipherCache)
 	current = result
 	copyto!(current, block)
 	K = cache.K
@@ -110,7 +110,7 @@ function AESDecryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}}, block
 	current
 end
 
-function AESDecryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}}, block::Union{Array{UInt8, 1}, SubArray{UInt8}}, key::AES192Key, cache::AES192Cache)
+function AESDecryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}}, block::Union{Array{UInt8, 1}, SubArray{UInt8}}, key::AES192Key, cache::CipherCache)
 	current = result
 	copyto!(current, block)
 	K = cache.K

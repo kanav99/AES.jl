@@ -21,19 +21,19 @@ c = [0x3b,0x3f,0xd9,0x2e,0xb7,0x2d,0xad,0x20,0x33,0x34,0x49,0xf8,0xe8,0x3c,0xfb,
     0xc7,0x8f,0x96,0x32,0xdc,0x61,0x46,0x19,0x01,0x15,0xa7,0xa5,0xfe,0x8a,0x8a,0xfc,
     0x57,0xed,0xb6,0x20,0x8e,0x32,0xd8,0x85,0xff,0x82,0xa5,0x41,0xee,0xcb,0x70,0x2f]
 # Cipher
-cipher = AES(key_length=128, mode=Rijndael.CTR, key=Rijndael.AES128Key(k), iv=iv)
-@test cipher.mode == Rijndael.CTR
+cipher = AES(;key_length=128, mode=Rijndael.CTR, key=Rijndael.AES128Key(k))
+@test Rijndael.get_mode(cipher) == Rijndael.CTR
 
 ## Encryption
 # Correctness Test
-ans = encrypt(p, cipher)
+ans = encrypt(p, cipher;iv=iv)
 @test ans.data == c
 
 # Benchmark Test
-@btime encrypt(p, cipher)
+@btime encrypt(p, cipher;iv=iv)
 
 ## Decryption
-ct = Rijndael.AESCipherText(c, cipher.iv, Rijndael.get_key_length(cipher), Rijndael.CTR, typeof(p))
+ct = Rijndael.AESCipherText(c, iv, Rijndael.get_key_length(cipher), Rijndael.CTR, typeof(p))
 ans = decrypt(ct, cipher)
 @test ans == p
 

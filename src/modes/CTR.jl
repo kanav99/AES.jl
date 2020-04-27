@@ -4,27 +4,22 @@ function AESCTR(plaintext, iv::Array{UInt8, 1}, key::AbstractAESKey, cache::Abst
     len = length(plaintext)
     pad = 16 - (len % 16)
     result = similar(Array{UInt8, 1}, len)
-    for i in 1:len
-        result[i] = UInt8(plaintext[i])
-    end
     iters = Int((len + pad) / 16)
-    copy_iv = copy(iv)
-    copy_iv2 = copy(iv)
-    for i in 1:iters
+    counter = cache.modecache
+    counter .= iv
+    for i in 1:(iters-1)
         start = 16(i-1)+1
         ending = 16i
-        copy_iv2[end] = iv[end] + i - 1
-        AESEncryptBlock!(copy_iv, copy_iv2, key.key, cache)
-        if i == iters
-            for j in start:len
-                result[j] = result[j] ⊻ copy_iv[j % 16]
-            end
-            break
-        else
-            view_res = @view(result[start:ending])
-            @. view_res = view_res ⊻ copy_iv
-        end
+        resultview = @view(result[start:ending])
+        AESEncryptBlock!(resultview, counter, key, cache)
+        @. resultview ⊻= @view(plaintext[start:ending])
+        increment!(counter)
     end
+    # for the last iteration, we dont need counter no more
+    # we can use the inplace property of AES
+    AESEncryptBlock!(counter, counter, key, cache)
+    start = 16(iters-1)+1
+    @. @view(result[start:len]) = @view(plaintext[start:len]) ⊻ @view(counter[start:len])
     result
 end
 

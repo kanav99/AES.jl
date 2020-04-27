@@ -68,7 +68,31 @@ function AESCBC_D(ciphertext::Array{UInt8, 1}, iv::Array{UInt8, 1}, key::Abstrac
 	end
 	if remove_pad
 		pad = result[end]
-		result[1:len-pad]
+		@view(result[1:len-pad])
+	else
+		result
+	end
+end
+
+function AESCBC_D!(plaintext, ciphertext::Array{UInt8, 1}, iv::Array{UInt8, 1}, key::AbstractAESKey, cache::AbstractAESCache; remove_pad=true)
+	len = length(ciphertext)
+	iters = Int(len / 16)
+	result = plaintext
+	for i in 1:iters
+		start = 16(i-1)+1
+		ending = 16i
+		ct_res = @view(ciphertext[start:ending])
+		view_res = @view(result[start:ending])
+		AESDecryptBlock!(view_res, ct_res, key, cache)
+		if i == 1
+			@. view_res = view_res ⊻ iv
+		else
+			@. view_res = view_res ⊻ @view(ciphertext[start-16:ending-16])
+		end
+	end
+	if remove_pad
+		pad = result[end]
+		@view(result[1:len-pad])
 	else
 		result
 	end
