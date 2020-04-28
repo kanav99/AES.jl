@@ -1,22 +1,22 @@
-function AESDecryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}}, block::Union{Array{UInt8, 1}, SubArray{UInt8}}, key)
+function AESDecryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}, B}, block::Union{Array{UInt8, 1}, SubArray{UInt8}, B}, key) where {B<:AESBlock}
 	cache = gen_cache(key)
 	AESDecryptBlock!(result, block, key, cache)
 end
 
-function AESDecryptBlock(block::Union{Array{UInt8, 1}, SubArray{UInt8}}, key)
+function AESDecryptBlock(block::Union{Array{UInt8, 1}, SubArray{UInt8}, B}, key) where {B<:AESBlock}
 	result = zeros(UInt8, 16)
 	cache = gen_cache(key)
 	AESDecryptBlock!(result, block, key, cache)
 	result
 end
 
-function AESDecryptBlock(block::Union{Array{UInt8, 1}, SubArray{UInt8}}, key, cache)
+function AESDecryptBlock(block::Union{Array{UInt8, 1}, SubArray{UInt8}, B}, key, cache) where {B<:AESBlock}
 	result = zeros(UInt8, 16)
 	AESDecryptBlock!(result, block, key, cache)
 	result
 end
 
-function AESDecryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}}, block::Union{Array{UInt8, 1}, SubArray{UInt8}}, key::AES128Key, cache::CipherCache)
+function AESDecryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}, B}, block::Union{Array{UInt8, 1}, SubArray{UInt8}, B}, key::AES128Key, cache::CipherCache) where {B<:AESBlock}
 	current = result
 	copyto!(current, block)
 	K = cache.K
@@ -110,7 +110,7 @@ function AESDecryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}}, block
 	current
 end
 
-function AESDecryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}}, block::Union{Array{UInt8, 1}, SubArray{UInt8}}, key::AES192Key, cache::CipherCache)
+function AESDecryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}, B}, block::Union{Array{UInt8, 1}, SubArray{UInt8}, B}, key::AES192Key, cache::CipherCache) where {B<:AESBlock}
 	current = result
 	copyto!(current, block)
 	K = cache.K

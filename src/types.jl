@@ -105,3 +105,30 @@ end
 
 @inline needs_iv(cipher) = iscbc(cipher) || isctr(cipher)
 
+mutable struct AESBlock{dataType,offsetType} <: AbstractArray{UInt8, 1}
+	data::dataType
+	offset::offsetType
+end
+
+function AESBlock(data, offset=1, len=16)
+	AESBlock{typeof(data), typeof(offset)}(data, offset)
+end
+
+function Base.getindex(block::B, i) where {B<:AESBlock}
+	return UInt8(block.data[16*(block.offset - 1) + i])
+end
+
+function Base.setindex!(block::B, val, i) where {B<:AESBlock}
+	block.data[16*(block.offset - 1) + i] = eltype(block.data)(val)
+end
+
+function Base.copyto!(block::B, arr::AbstractArray{T2,1}) where {B<:AESBlock, T2}
+	for i in 1:16
+		block.data[16*(block.offset - 1) + i] = eltype(block.data)(arr[i])
+	end
+end
+
+@inline Base.size(block::AESBlock) = (16,)
+@inline Base.length(block::AESBlock) = 16
+
+increment!(block::B) where {B<:AESBlock} = block.offset += 1
