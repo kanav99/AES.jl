@@ -105,13 +105,14 @@ end
 
 @inline needs_iv(cipher) = iscbc(cipher) || isctr(cipher)
 
+# Block type
+
 mutable struct AESBlock{dataType,offsetType} <: AbstractArray{UInt8, 1}
 	data::dataType
 	offset::offsetType
-end
-
-function AESBlock(data, offset=1, len=16)
-	AESBlock{typeof(data), typeof(offset)}(data, offset)
+	function AESBlock(data, offset=1, len=16)
+		new{typeof(data), typeof(offset)}(data, offset)
+	end
 end
 
 function Base.getindex(block::B, i) where {B<:AESBlock}
