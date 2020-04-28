@@ -1,25 +1,25 @@
 """
 Note: you can pass `result` and `block` as same pointers
 """
-function AESEncryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}}, block::Union{Array{UInt8, 1}, SubArray{UInt8}}, key)
+function AESEncryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}, B}, block::Union{Array{UInt8, 1}, SubArray{UInt8}, B}, key) where {B<:AESBlock}
 	cache = gen_cache(key)
 	AESEncryptBlock!(result, block, key, cache)
 end
 
-function AESEncryptBlock(block::Union{Array{UInt8, 1}, SubArray{UInt8}}, key, cache)
+function AESEncryptBlock(block::Union{Array{UInt8, 1}, SubArray{UInt8}, B}, key, cache) where {B<:AESBlock}
 	result = zeros(UInt8, 16)
 	AESEncryptBlock!(result, block, key, cache)
 	result
 end
 
-function AESEncryptBlock(block::Union{Array{UInt8, 1}, SubArray{UInt8}}, key)
+function AESEncryptBlock(block::Union{Array{UInt8, 1}, SubArray{UInt8}, B}, key) where {B<:AESBlock}
 	result = zeros(UInt8, 16)
 	cache = gen_cache(key)
 	AESEncryptBlock!(result, block, key, cache)
 	result
 end
 
-function AESEncryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}}, block::Union{Array{UInt8, 1}, SubArray{UInt8}}, key::AES128Key, cache::CipherCache)
+function AESEncryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}, B}, block::Union{Array{UInt8, 1}, SubArray{UInt8}, B}, key::AES128Key, cache::CipherCache) where {B<:AESBlock}
 	current = result
 	copyto!(current, block)
 	K = cache.K
@@ -96,7 +96,7 @@ function AESEncryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}}, block
 	current
 end
 
-function AESEncryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}}, block::Union{Array{UInt8, 1}, SubArray{UInt8}}, key::AES192Key, cache::CipherCache)
+function AESEncryptBlock!(result::Union{Array{UInt8, 1}, SubArray{UInt8}, B}, block::Union{Array{UInt8, 1}, SubArray{UInt8}, B}, key::AES192Key, cache::CipherCache) where {B<:AESBlock}
 	current = result
 	copyto!(current, block)
 	K = cache.K
