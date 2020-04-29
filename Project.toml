@@ -1,4 +1,4 @@
-name = "Rijndael"
+name = "AES"
 uuid = "5a3fb44e-d90d-11e9-053b-99581e1bac63"
 authors = ["Kanav Gupta <kanav0610@gmail.com>"]
 version = "0.1.0"

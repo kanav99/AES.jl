@@ -2,7 +2,7 @@
 """
 Common interface for all modes and key lengths
 """
-function decrypt(ciphertext::AESCipherText, cipher::AES; remove_pad=true)
+function decrypt(ciphertext::AESCipherText, cipher::AESCipher; remove_pad=true)
 	if ciphertext.mode !== get_mode(cipher)
 		error("Mismatching mode and cipher")
 	end
@@ -19,7 +19,7 @@ function decrypt(ciphertext::AESCipherText, cipher::AES; remove_pad=true)
 	return (ciphertext.original_type)(raw)
 end
 
-function decrypt!(plaintext, ciphertext::AESCipherText, cipher::AES; remove_pad=true)
+function decrypt!(plaintext, ciphertext::AESCipherText, cipher::AESCipher; remove_pad=true)
 	if ciphertext.mode !== get_mode(cipher)
 		error("Mismatching mode and cipher")
 	end
