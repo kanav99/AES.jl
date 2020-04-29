@@ -1,4 +1,4 @@
-module Rijndael
+module AES
 
 	using StaticArrays, Random
 
@@ -19,7 +19,7 @@ module Rijndael
 	include("encrypt.jl")
 	include("decrypt.jl")
 
-	export AES
+	export AESCipher
 	export AES128Key, AES192Key, AES256Key
 	export AESCache
 	export encrypt, decrypt

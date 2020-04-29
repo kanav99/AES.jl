@@ -1,11 +1,11 @@
-using Rijndael, Test
+using AES, Test
 
 k = [0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c]
 key = AES128Key(k)
 
 plaintext = "The quick brown fox jumps over the lazy dog."
 
-cipher = AES(;key_length=128, mode=Rijndael.ECB, key=key)
+cipher = AESCipher(;key_length=128, mode=AES.ECB, key=key)
 ct = encrypt(plaintext, cipher)
 pt = decrypt(ct, cipher)
 

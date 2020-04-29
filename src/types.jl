@@ -73,12 +73,12 @@ end
 
 """
 """
-mutable struct AES{mode,cacheType,keyType} <: AbstractCipher
+mutable struct AESCipher{mode,cacheType,keyType} <: AbstractCipher
 	cache::cacheType
 	key::keyType
 end
 
-function AES(;key_length=128,mode=CBC,key=keygen(key_length))
+function AESCipher(;key_length=128,mode=CBC,key=keygen(key_length))
 	if !is_valid_key_length(key_length)
 		error("$key_length is an invalid key length. Key length can be 128, 196 or 256.")
 	end
@@ -91,17 +91,17 @@ function AES(;key_length=128,mode=CBC,key=keygen(key_length))
 
 	cache = gen_cache(aes_key, mode)
 
-	AES{mode,typeof(cache),typeof(aes_key)}(cache,aes_key)
+	AESCipher{mode,typeof(cache),typeof(aes_key)}(cache,aes_key)
 end
 
-@inline isecb(cipher::AES{m,c,k}) where {m,c,k} = m == ECB
-@inline iscbc(cipher::AES{m,c,k}) where {m,c,k} = m == CBC
-@inline iscfb(cipher::AES{m,c,k}) where {m,c,k} = m == CFB
-@inline isofb(cipher::AES{m,c,k}) where {m,c,k} = m == OFB
-@inline isctr(cipher::AES{m,c,k}) where {m,c,k} = m == CTR
+@inline isecb(cipher::AESCipher{m,c,k}) where {m,c,k} = m == ECB
+@inline iscbc(cipher::AESCipher{m,c,k}) where {m,c,k} = m == CBC
+@inline iscfb(cipher::AESCipher{m,c,k}) where {m,c,k} = m == CFB
+@inline isofb(cipher::AESCipher{m,c,k}) where {m,c,k} = m == OFB
+@inline isctr(cipher::AESCipher{m,c,k}) where {m,c,k} = m == CTR
 
-@inline get_mode(cipher::AES{m,c,k}) where {m,c,k} = m
-@inline get_key_length(cipher::AES) = get_key_length(cipher.key)
+@inline get_mode(cipher::AESCipher{m,c,k}) where {m,c,k} = m
+@inline get_key_length(cipher::AESCipher) = get_key_length(cipher.key)
 
 @inline needs_iv(cipher) = iscbc(cipher) || isctr(cipher)
 
