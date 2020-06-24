@@ -54,9 +54,8 @@ mutable struct CipherText{ivType,mode}
 	data::Array{UInt8}
 	iv::ivType
 	keylength::Int
-	original_type::Type
 end
-CipherText(data, iv::IV, keylength, mode::MODE, original_type) where {IV} = CipherText{IV,mode}(data, iv, keylength, original_type)
+CipherText(data, iv::IV, keylength, mode::MODE) where {IV} = CipherText{IV,mode}(data, iv, keylength)
 const CT = CipherText
 
 # Cipher Type
