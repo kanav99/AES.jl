@@ -1,38 +1,12 @@
-
 """
 Common interface for all modes and key lengths
 """
-function decrypt(ciphertext::AESCipherText, cipher::AESCipher; remove_pad=true)
-	if ciphertext.mode !== get_mode(cipher)
-		error("Mismatching mode and cipher")
-	end
-	if ciphertext.keylength !== get_key_length(cipher)
-		error("Mismatching keylength")
-	end
-	if iscbc(cipher)
-		raw = AESCBC_D(ciphertext.data, ciphertext.iv, cipher.key, cipher.cache; remove_pad=remove_pad)
-	elseif isctr(cipher)
-		raw = AESCTR_D(ciphertext.data, ciphertext.iv, cipher.key, cipher.cache)
-	elseif isecb(cipher)
-		raw = AESECB_D(ciphertext.data, cipher.key, cipher.cache)
-	end
-	return (ciphertext.original_type)(raw)
-end
+function decrypt end
 
-function decrypt!(plaintext, ciphertext::AESCipherText, cipher::AESCipher; remove_pad=true)
-	if ciphertext.mode !== get_mode(cipher)
-		error("Mismatching mode and cipher")
-	end
-	if ciphertext.keylength !== get_key_length(cipher)
-		error("Mismatching keylength")
-	end
-	if iscbc(cipher)
-		AESCBC_D!(plaintext, ciphertext.data, ciphertext.iv, cipher.key, cipher.cache; remove_pad=remove_pad)
-	elseif isctr(cipher)
-		AESCTR_D!(plaintext, ciphertext.data, ciphertext.iv, cipher.key, cipher.cache)
-	elseif isecb(cipher)
-		AESECB_D!(plaintext, ciphertext.data, cipher.key, cipher.cache)
-	end
-	return (ciphertext.original_type)(plaintext)
-end
+decrypt(ciphertext::CT{IV,CBC}, cipher::Cipher{CBC,ct,kt}; remove_pad=true) where {IV,ct,kt} = AESCBC_D(ciphertext.data, ciphertext.iv, cipher.key, cipher.cache; remove_pad=remove_pad)
+decrypt(ciphertext::CT{IV,CTR}, cipher::Cipher{CTR,ct,kt}) where {IV,ct,kt} = AESCTR_D(ciphertext.data, ciphertext.iv, cipher.key, cipher.cache)
+decrypt(ciphertext::CT{IV,ECB}, cipher::Cipher{ECB,ct,kt}) where {IV,ct,kt} = AESECB_D(ciphertext.data, cipher.key, cipher.cache)
 
+decrypt!(plaintext, ciphertext::CT{IV,CBC}, cipher::Cipher{CBC,ct,kt}; remove_pad=true) where {IV,ct,kt} = AESCBC_D!(plaintext, ciphertext.data, ciphertext.iv, cipher.key, cipher.cache; remove_pad=remove_pad)
+decrypt!(plaintext, ciphertext::CT{IV,CTR}, cipher::Cipher{CTR,ct,kt}) where {IV,ct,kt} = AESCTR_D!(plaintext, ciphertext.data, ciphertext.iv, cipher.key, cipher.cache)
+decrypt!(plaintext, ciphertext::CT{IV,ECB}, cipher::Cipher{ECB,ct,kt}) where {IV,ct,kt} = AESECB_D!(plaintext, ciphertext.data, cipher.key, cipher.cache)
