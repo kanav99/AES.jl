@@ -1,7 +1,7 @@
 name = "AES"
 uuid = "5a3fb44e-d90d-11e9-053b-99581e1bac63"
 authors = ["Kanav Gupta <kanav0610@gmail.com>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
