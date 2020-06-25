@@ -31,5 +31,5 @@ function AESCTR!(ciphertext, plaintext, iv::Array{UInt8, 1}, key::AbstractAESKey
 end
 
 # Encryption is same as decryption in CTR mode for a give Key and IV
-AESCTR_D = AESCTR
-AESCTR_D! = AESCTR!
+const AESCTR_D = AESCTR
+const AESCTR_D! = AESCTR!

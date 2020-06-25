@@ -1,26 +1,20 @@
 """
 Common interface for all modes and key lengths
 """
-function encrypt(plaintext::Union{String,Array{UInt8}}, cipher::AESCipher;
-				 iv=needs_iv(cipher) ? rand(UInt8, 16) : nothing)
-	if iscbc(cipher)
-		ciphertext = AESCBC(plaintext, iv, cipher.key, cipher.cache)
-	elseif isctr(cipher)
-		ciphertext = AESCTR(plaintext, iv, cipher.key, cipher.cache)
-	elseif isecb(cipher)
-		ciphertext = AESECB(plaintext, cipher.key, cipher.cache)
-	end
-	return AESCipherText(ciphertext, iv, get_key_length(cipher), get_mode(cipher), typeof(plaintext))
-end
+function encrypt end
 
-function encrypt!(ciphertext, plaintext::Union{String,Array{UInt8}}, cipher::AESCipher;
-				 iv=needs_iv(cipher) ? rand(UInt8, 16) : nothing)
-	if iscbc(cipher)
-		AESCBC!(ciphertext, plaintext, iv, cipher.key, cipher.cache)
-	elseif isctr(cipher)
-		AESCTR!(ciphertext, plaintext, iv, cipher.key, cipher.cache)
-	elseif isecb(cipher)
-		AESECB!(ciphertext, plaintext, cipher.key, cipher.cache)
-	end
-	return AESCipherText(ciphertext, iv, get_key_length(cipher), get_mode(cipher), typeof(plaintext))
-end
+encrypt(plain, cipher::Cipher{CBC,T,U}; iv=rand(UInt8, 16)) where {T,U} = encrypt(transcode(UInt8, plain), cipher, iv)
+encrypt(plain, cipher::Cipher{CTR,T,U}; iv=rand(UInt8, 16)) where {T,U} = encrypt(transcode(UInt8, plain), cipher, iv)
+encrypt(plain, cipher::Cipher) = encrypt(transcode(UInt8, plain), cipher)
+
+encrypt(plaintext::AbstractArray{UInt8}, cipher::Cipher{CBC,T,U}, iv) where {T,U} = CipherText(AESCBC(plaintext, iv, cipher.key, cipher.cache), iv, get_key_length(cipher), CBC)
+encrypt(plaintext::AbstractArray{UInt8}, cipher::Cipher{CTR,T,U}, iv) where {T,U} = CipherText(AESCTR(plaintext, iv, cipher.key, cipher.cache), iv, get_key_length(cipher), CTR)
+encrypt(plaintext::AbstractArray{UInt8}, cipher::Cipher{ECB,T,U}) where {T,U} = CipherText(AESECB(plaintext, cipher.key, cipher.cache), nothing, get_key_length(cipher), ECB)
+
+encrypt!(ciphertext, plaintext, cipher::Cipher{CBC,T,U}; iv=rand(UInt8, 16)) where {T,U} = encrypt!(ciphertext, transcode(UInt8, plaintext), cipher, iv)
+encrypt!(ciphertext, plaintext, cipher::Cipher{CTR,T,U}; iv=rand(UInt8, 16)) where {T,U} = encrypt!(ciphertext, transcode(UInt8, plaintext), cipher, iv)
+encrypt!(ciphertext, plaintext, cipher::Cipher) = encrypt!(ciphertext, transcode(UInt8, plaintext), cipher)
+
+encrypt!(ciphertext, plaintext::AbstractArray{UInt8}, cipher::Cipher{CBC,T,U}, iv) where {T,U} = CipherText(AESCBC!(ciphertext, plaintext, iv, cipher.key, cipher.cache), iv, get_key_length(cipher), CBC)
+encrypt!(ciphertext, plaintext::AbstractArray{UInt8}, cipher::Cipher{CTR,T,U}, iv) where {T,U} = CipherText(AESCTR!(ciphertext, plaintext, iv, cipher.key, cipher.cache), iv, get_key_length(cipher), CTR)
+encrypt!(ciphertext, plaintext::AbstractArray{UInt8}, cipher::Cipher{ECB,T,U}) where {T,U} = CipherText(AESECB!(ciphertext, plaintext, cipher.key, cipher.cache), nothing, get_key_length(cipher), ECB)

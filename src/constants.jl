@@ -7,9 +7,6 @@
 	CTR = 5
 end
 
-Base.xor(a::Char, b::UInt8) = xor(UInt8(a), b)
-Base.xor(a::UInt8, b::Char) = xor(a, UInt8(b))
-
 global const SBOX = @SArray[
 0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
 0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0,
@@ -78,14 +75,11 @@ function aes_mul(x::UInt8, y::UInt8)
 end
 
 function keygen(key_length)
-	rand(UInt8, UInt8(key_length/8))
+	rand(UInt8, key_length ÷ 8)
 end
 
 function is_valid_key_length(key_length)
-	if key_length == 128 || key_length == 192 || key_length == 256
-		return true
-	end
-	return false
+	return key_length == 128 || key_length == 192 || key_length == 256
 end
 
 function increment!(bytearray::Array{UInt8})

@@ -1,19 +1,13 @@
 # Key types
 
-"""
-"""
 struct AES256Key <: AbstractAESKey 
 	key::Array{UInt8, 1}
 end
 
-"""
-"""
 struct AES192Key <: AbstractAESKey
 	key::Array{UInt8, 1}
 end
 
-"""
-"""
 struct AES128Key <: AbstractAESKey
 	key::Array{UInt8, 1}
 end
@@ -27,14 +21,11 @@ end
 @inline Base.getindex(k::AbstractAESKey, i) = k.key[i]
 
 @inline get_key_length(key::Array{UInt8}) = 8 * length(key)
-@inline get_key_length(key::String) = 8 * length(key)
 @inline get_key_length(key::AES128Key) = 128
 @inline get_key_length(key::AES192Key) = 192
 @inline get_key_length(key::AES256Key) = 256
 
 # Cache Type
-"""
-"""
 mutable struct CipherCache{kType,tmpType,modecacheType} <: AbstractAESCache
 	""" registers to contain intermediate keys """
 	K::kType
@@ -59,26 +50,22 @@ function gen_cache(key::AbstractAESKey, mode=CBC)
 end
 
 # Ciphertext type
-"""
-"""
-mutable struct AESCipherText{ivType,modeType}
+mutable struct CipherText{ivType,mode}
 	data::Array{UInt8}
 	iv::ivType
 	keylength::Int
-	mode::modeType
-	original_type::Type
 end
+CipherText(data, iv::IV, keylength, mode::MODE) where {IV} = CipherText{IV,mode}(data, iv, keylength)
+const CT = CipherText
 
 # Cipher Type
-
-"""
-"""
-mutable struct AESCipher{mode,cacheType,keyType} <: AbstractCipher
+mutable struct Cipher{mode,cacheType,keyType} <: AbstractCipher
 	cache::cacheType
 	key::keyType
 end
+const AESCipher = Cipher
 
-function AESCipher(;key_length=128,mode=CBC,key=keygen(key_length))
+function Cipher(;key_length=128,mode=CBC,key=keygen(key_length))
 	if !is_valid_key_length(key_length)
 		error("$key_length is an invalid key length. Key length can be 128, 196 or 256.")
 	end
@@ -91,17 +78,17 @@ function AESCipher(;key_length=128,mode=CBC,key=keygen(key_length))
 
 	cache = gen_cache(aes_key, mode)
 
-	AESCipher{mode,typeof(cache),typeof(aes_key)}(cache,aes_key)
+	Cipher{mode,typeof(cache),typeof(aes_key)}(cache,aes_key)
 end
 
-@inline isecb(cipher::AESCipher{m,c,k}) where {m,c,k} = m == ECB
-@inline iscbc(cipher::AESCipher{m,c,k}) where {m,c,k} = m == CBC
-@inline iscfb(cipher::AESCipher{m,c,k}) where {m,c,k} = m == CFB
-@inline isofb(cipher::AESCipher{m,c,k}) where {m,c,k} = m == OFB
-@inline isctr(cipher::AESCipher{m,c,k}) where {m,c,k} = m == CTR
+@inline isecb(cipher::Cipher{m,c,k}) where {m,c,k} = m == ECB
+@inline iscbc(cipher::Cipher{m,c,k}) where {m,c,k} = m == CBC
+@inline iscfb(cipher::Cipher{m,c,k}) where {m,c,k} = m == CFB
+@inline isofb(cipher::Cipher{m,c,k}) where {m,c,k} = m == OFB
+@inline isctr(cipher::Cipher{m,c,k}) where {m,c,k} = m == CTR
 
-@inline get_mode(cipher::AESCipher{m,c,k}) where {m,c,k} = m
-@inline get_key_length(cipher::AESCipher) = get_key_length(cipher.key)
+@inline get_mode(cipher::Cipher{m,c,k}) where {m,c,k} = m
+@inline get_key_length(cipher::Cipher) = get_key_length(cipher.key)
 
 @inline needs_iv(cipher) = iscbc(cipher) || isctr(cipher)
 
