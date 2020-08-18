@@ -46,7 +46,7 @@ end
 
 @inline get_intermediate_words(key::AES128Key) = @SArray[ zeros(UInt8, 4) for i in 1:4 ]
 @inline get_intermediate_words(key::AES192Key) = @SArray[ zeros(UInt8, 4) for i in 1:6 ]
-@inline get_intermediate_words(key::AES256Key) = @SArray[ zeros(UInt8, 4) for i in 1:4 ]
+@inline get_intermediate_words(key::AES256Key) = @SArray[ zeros(UInt8, 4) for i in 1:8 ]
 
 @inline get_modecache(m::Val{CTR}) = similar(Array{UInt8}, 16)
 @inline get_modecache(m) = nothing
