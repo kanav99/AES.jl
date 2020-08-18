@@ -110,6 +110,10 @@ function Base.setindex!(block::B, val, i) where {B<:AESBlock}
 	block.data[16*(block.offset - 1) + i] = eltype(block.data)(val)
 end
 
+function Base.copy(block::AESBlock)
+	return AESBlock(copy(block.data), block.offset)
+end
+
 function Base.copyto!(block::B, arr::AbstractArray{T2,1}) where {B<:AESBlock, T2}
 	for i in 1:16
 		block.data[16*(block.offset - 1) + i] = eltype(block.data)(arr[i])
